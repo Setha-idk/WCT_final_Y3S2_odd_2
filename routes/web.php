@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\Comment;
 use App\Models\User;
 use App\Http\Controllers\WebController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return redirect('/posts');
@@ -56,9 +57,11 @@ Route::get('/posts/create', function () {
 });
 
 // Show edit post form
+
 Route::get('/posts/{post}/edit', function (App\Models\Post $post) {
     // Only allow the owner to edit
-    if (auth()->id() !== $post->user_id) {
+    $user = Auth::user();
+    if ($user === null || $user->id !== $post->user_id) {
         abort(403);
     }
     return view('edit_post', compact('post'));
